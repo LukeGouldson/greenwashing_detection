@@ -1,0 +1,91 @@
+An explanation of Training_args:
+
+    gradient_checkpointing=             not a training arg, but relevant. Trades computation time for memory usage. Instead of saving all weights, it just saves a subset and the others are recomputed on the fly during the backwards pass
+
+    TrainingArguments(
+        output_dir=                     simply, the directory you want everything to be saved to
+        per_device_train_batch_size=    the batch size for each device in use. Since just using one GPU, this is not massively relevant
+        num_train_epochs=               epochs allow the model to go over the whole training dataset again. Too many = overfitting, too few = underfitting
+        eval_strategy=                  only refers to evaluation done DURING training, so this is just for my benefit when watching the train() function, to make sure it's not doing something wacky
+        eval_steps=                     how often we perform this eval. Increase to reduce overhead
+        logging_strategy=               same as eval, logging determines how often we actually display stuff on the screen during training
+        logging_steps=                  how often we logging
+        save_strategy=                  saving is burdensome, so I set this to no. No need to save the model during training. The final model can be saved anyway outside this function
+        fp16=True                       use 16-bit floating point instead of 32. Easier on memory for my device to avoid OOM errors
+        warmup_ratio=                   guides the model towards the learning_rate, in theory stabilising training by preventing early overfitting. As a ratio, this means the proportion of steps that warming up should take (linear increase towards the actual learning rate, from 0)
+        learning_rate=                  how much the model will adjust its weights based on new data. Recommended to be very small for BERT because he can experience CATASTROPHIC FORGETTING if it's too large. Also don't want overfitting. 3e-5 is the max, really
+        push_to_hub=                    we don't wanna put this on huggingface, really
+        gradient_accumulation_steps=    how many steps to accumulate gradients for before performing a backwards pass. Increasing this will be LESS memory intensive because we will perform less weight updates, at the cost of some accuracy, perhaps
+    )
+
+
+Training_args used for each test in the results directory:
+
+
+results/climateBERT-base/climate_fever_sample/first_test AND results/climateBERT-base/climate_fever_sample/check
+
+    training_args = TrainingArguments(
+        output_dir="./results/climateBERT-base/climate_fever_sample/check",
+        per_device_train_batch_size=4,                                              # Small batch size allows model to update parameters more frequently which is necessary for the small sample dataset
+        num_train_epochs=5,                                                         # More epochs helps prevent overfitting (corresponds to how many times the model goes through the data)
+        eval_strategy="steps",
+        eval_steps=50,
+        logging_strategy="steps",
+        logging_steps=10,
+        save_strategy="no",                                                         # Saving doesn't matter since we can just do it again if it fails
+        fp16=True,
+        warmup_ratio=0.1,
+
+        learning_rate=2e-5,
+        push_to_hub=False,
+    )
+
+    dataset unshuffled
+
+
+
+
+results/climateBERT-base/climate_fever/first_run
+
+    training_args = TrainingArguments(
+        output_dir="./results/climateBERT-base/climate_fever/first_run",
+        per_device_train_batch_size=8,
+        num_train_epochs=3,
+        evaluation_strategy="steps",
+        eval_steps=200,
+        logging_strategy="steps",
+        logging_steps=50,
+        save_strategy="no",
+        save_steps=500,
+        fp16=True,                          # Use 16-bit floating point instead of 32 - makes computation faster
+        warmup_ratio=0.05,                    # Allows the model to adapt a little
+        # gradient_accumulation_steps=2       # Might help with OOM errors, if we have them
+        learning_rate=3e-5,
+        push_to_hub=False,
+    )
+
+    shuffle seed = 13
+
+
+
+results/climateBERT-base/climate_fever/second_run
+
+gradient_checkpointing = enabled
+
+# This is where we set the hyperparameters
+training_args = TrainingArguments(
+    output_dir="./results/climateBERT-base/climate_fever/second_run",
+    per_device_train_batch_size=8,
+    num_train_epochs=3,
+    evaluation_strategy="steps",
+    eval_steps=600,
+    logging_strategy="steps",
+    logging_steps=200,
+    save_strategy="no",
+    save_steps=500,
+    fp16=True,                          # Use 16-bit floating point instead of 32 - makes computation faster
+    warmup_ratio=0.05,                    # Allows the model to adapt a little
+    # gradient_accumulation_steps=2       # Might help with OOM errors, if we have them
+    learning_rate=2e-5,
+    push_to_hub=False,
+)
