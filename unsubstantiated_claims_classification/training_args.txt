@@ -22,7 +22,11 @@ An explanation of Training_args:
 Training_args used for each test in the results directory:
 
 
-results/climateBERT-base/climate_fever_sample/first_test AND results/climateBERT-base/climate_fever_sample/check
+
+
+UNSUBSTANTIATED
+
+climatebert SAMPLES ONLY
 
     training_args = TrainingArguments(
         output_dir="./results/climateBERT-base/climate_fever_sample/check",
@@ -45,7 +49,7 @@ results/climateBERT-base/climate_fever_sample/first_test AND results/climateBERT
 
 
 
-results/climateBERT-base/climate_fever/first_run
+climatebert seed13
 
     training_args = TrainingArguments(
         output_dir="./results/climateBERT-base/climate_fever/first_run",
@@ -68,7 +72,7 @@ results/climateBERT-base/climate_fever/first_run
 
 
 
-results/climateBERT-base/climate_fever/second_run
+climatebert seed 13
 
 gradient_checkpointing = enabled
 
@@ -87,5 +91,54 @@ training_args = TrainingArguments(
     warmup_ratio=0.05,                    # Allows the model to adapt a little
     # gradient_accumulation_steps=2       # Might help with OOM errors, if we have them
     learning_rate=2e-5,
+    push_to_hub=False,
+)
+
+
+
+CLIMATERELATEDNESS
+
+
+climatebert seed13
+
+gradient_checkpointing
+
+training_args = TrainingArguments(
+    output_dir="./results/climateBERT-base/climateBUG/seed12",
+    per_device_train_batch_size=8,
+    num_train_epochs=3,
+    evaluation_strategy="steps",
+    eval_steps=200,
+    logging_strategy="steps",
+    logging_steps=50,
+    save_strategy="no",
+    save_steps=500,
+    fp16=True,                          # Use 16-bit floating point instead of 32 - makes computation faster
+    warmup_ratio=0.05,                    # Allows the model to adapt a little
+    # gradient_accumulation_steps=2       # Might help with OOM errors, if we have them
+    learning_rate=3e-5,
+    push_to_hub=False,
+)
+
+
+
+climatebert seed 12
+
+gradient_checkpointing
+
+training_args = TrainingArguments(
+    output_dir="./results/climateBERT-base/climateBUG/seed12",
+    per_device_train_batch_size=8,
+    num_train_epochs=3,
+    evaluation_strategy="steps",
+    eval_steps=200,
+    logging_strategy="steps",
+    logging_steps=50,
+    save_strategy="no",
+    save_steps=500,
+    fp16=True,                          # Use 16-bit floating point instead of 32 - makes computation faster
+    warmup_ratio=0.05,                    # Allows the model to adapt a little
+    # gradient_accumulation_steps=2       # Might help with OOM errors, if we have them
+    learning_rate=3e-5,
     push_to_hub=False,
 )
