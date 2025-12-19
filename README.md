@@ -1,4 +1,4 @@
-# Project Notes
+# Transformers for Greenwashing Detection
 
 ## Project Summary
 
